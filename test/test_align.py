@@ -3,6 +3,8 @@ import pytest
 from align import NeedlemanWunsch, read_fasta
 import numpy as np
 
+#Assisted by Chat-Gpt-4o
+
 def test_nw_alignment():
     """
     TODO: Write your unit test for NW alignment
@@ -14,7 +16,22 @@ def test_nw_alignment():
     """
     seq1, _ = read_fasta("./data/test_seq1.fa")
     seq2, _ = read_fasta("./data/test_seq2.fa")
-    pass
+    
+    nw = NeedlemanWunsch("substitution_matrices/BLOSUM62.mat", -10, -1)
+    score, align1, align2 = nw.align(seq1, seq2)
+
+    align_matrix = np.array([
+       [  0., -np.inf, -np.inf, -np.inf],
+       [-np.inf,   5., -11., -13.],
+       [-np.inf, -12.,   4.,  -8.],
+       [-np.inf, -12.,  -1.,   5.],
+       [-np.inf, -14.,  -6.,   4.]])
+    
+    # Test final alignment
+    assert np.allclose(nw._align_matrix, align_matrix)
+    assert score == 4.0
+
+    
     
 
 def test_nw_backtrace():
@@ -27,8 +44,13 @@ def test_nw_backtrace():
     """
     seq3, _ = read_fasta("./data/test_seq3.fa")
     seq4, _ = read_fasta("./data/test_seq4.fa")
-    pass
 
+    nw = NeedlemanWunsch("substitution_matrices/BLOSUM62.mat", -10, -1)
+    score, align1, align2 = nw.align(seq3, seq4)
+
+    assert score == 17
+    assert align1 == 'MAVHQLIRRP'
+    assert align2 == 'M---QLIRHP'
 
 
 
